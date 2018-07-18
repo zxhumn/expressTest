@@ -1,6 +1,6 @@
 
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017';
+const url = 'mongodb://127.0.0.1:27017';
 
 // Database Name
 const dbName = 'SZHM19';
@@ -14,7 +14,7 @@ module.exports = {
     },
     // 增加
     insert(collectionName,docs,callback){
-       MongoClient.connect(url, function(err, client) {
+       MongoClient.connect(url,  { useNewUrlParser: true } ,function(err, client) {
        
          const db = client.db(dbName);
          const collection = db.collection(collectionName);
@@ -28,7 +28,7 @@ module.exports = {
    },
     // 查询
     find(collectionName,query,callback){
-        MongoClient.connect(url, function(err, client) {
+        MongoClient.connect(url, { useNewUrlParser: true } , function(err, client) {
         
           const db = client.db(dbName);
           const collection = db.collection(collectionName);
@@ -42,7 +42,7 @@ module.exports = {
     },
     // 删除
     delete(collectionName,query,callback){
-        MongoClient.connect(url, function(err, client) {
+        MongoClient.connect(url, { useNewUrlParser: true } , function(err, client) {
         
           const db = client.db(dbName);
           const collection = db.collection(collectionName);
@@ -56,7 +56,7 @@ module.exports = {
     },
     // 修改
     update(collectionName,query,doc,callback){
-        MongoClient.connect(url, function(err, client) {
+        MongoClient.connect(url,  { useNewUrlParser: true } ,function(err, client) {
         
           const db = client.db(dbName);
           const collection = db.collection(collectionName);

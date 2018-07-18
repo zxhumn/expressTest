@@ -8,6 +8,8 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 // 导入tool
 let myT = require(path.join(__dirname,'tools/myT'));
+// 导入router文件
+let indexRouter = require(path.join(__dirname,'router/indexRouter'));
 let app = express();
 // 静态托管
 app.use(express.static('static'));
@@ -19,8 +21,11 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 // 导入模板
 app.engine('art', require('express-art-template'));
-app.set('view', '/static/views');
-// 显示登录页
+app.set('views', '/static/views');
+// 显示首页
+// 使用路由中间件 挂载index
+app.use('/index',indexRouter);
+// 显示登录恶业
 app.get('/login',(req,res)=>{
     res.sendFile(path.join(__dirname,'/static/views/login.html'));
 })
@@ -37,19 +42,19 @@ app.post('/login',(req,res)=>{
     // console.log(req.body);
     
     let code = req.session.captcha;
-    console.log(code);
+    // console.log(code);
     if(req.body.code==code){
         // 验证码正确
         let userName = req.body.userName;
         let userPass = req.body.userPass;
-        console.log(userName,userPass,req.body);
+        // console.log(userName,userPass,req.body);
         // 验证用户名和密码
         myT.find('userList',{
             userName,
             userPass
         },(err,docs)=>{
             if(!err){
-                console.log(docs);
+                // console.log(docs);
                 if(docs.length==1){
                     req.session.userInfo = {
                         userName
@@ -67,16 +72,8 @@ app.post('/login',(req,res)=>{
         res.send('<script>alert("验证码错误");window.location.href="/login"</script>');
     }
 });
-// 显示首页
-app.get('/index',(req,res)=>{
-    if(req.session.userInfo){
-        res.sendFile(path.join(__dirname,'static/views/index.html'));
-    }else {
-        res.setHeader('content-type','text/html');
-        res.send('<script>alert("请登录");window.location.href="/login"</script>');
-   
-    }
-});
+
+
 // 退出
 app.get('/logout',(req,res)=>{
     delete req.session.userInfo;
